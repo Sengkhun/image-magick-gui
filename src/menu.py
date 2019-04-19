@@ -1,5 +1,8 @@
+import os
+import subprocess
 import tkinter as tk
 from tkinter import filedialog
+from .image import copy_image
 
 #==============================================
 
@@ -10,14 +13,16 @@ def donothing(name='button'):
 
 def file_open_menu(window, img):
     window.filename = filedialog.askopenfilename(title = "Select image", filetypes = (("Image files","*.jpg *.jpeg *.png"), ("All files","*.*")))
+    copy_image(window.filename)
+    img.configure(file=window.filename)
 
 #==============================================
 
-def create_menu(window):
+def create_menu(window, img):
     menubar = tk.Menu(window)
     filemenu = tk.Menu(menubar, tearoff=0)
     filemenu.add_command(label="New", command=donothing)
-    filemenu.add_command(label="Open...", command=file_open_menu)
+    filemenu.add_command(label="Open...", command=lambda:file_open_menu(window, img))
     filemenu.add_command(label="Save", command=donothing)
     filemenu.add_command(label="Save as...", command=donothing)
     filemenu.add_command(label="Close", command=donothing)
