@@ -2,7 +2,12 @@ import os
 import subprocess
 import tkinter as tk
 from tkinter import filedialog
-from .image import copy_image
+
+from PIL import Image
+from PIL import ImageTk
+
+from .image import copy_image, save_img, manage_main_image
+from .window import center_window
 
 #==============================================
 
@@ -11,19 +16,29 @@ def donothing(name='button'):
 
 #==============================================
 
-def file_open_menu(window, img):
-    window.filename = filedialog.askopenfilename(title = "Select image", filetypes = (("Image files","*.jpg *.jpeg *.png"), ("All files","*.*")))
-    copy_image(window.filename)
-    img.configure(file=window.filename)
+def file_open_menu(window, panel):
+    image_path = filedialog.askopenfilename(title = "Select image", filetypes = (("Image files","*.jpg *.jpeg *.png"), ("All files","*.*")))
+    copy_image(image_path)
+
+    # save original image path to file
+    f = open("temp/path.txt", "w")
+    f.write(image_path)
+    f.close()
+
+    img = manage_main_image(window)
+    panel.configure(image=img)
+    panel.image = img
+    
+    center_window(window)
 
 #==============================================
 
-def create_menu(window, img):
+def create_menu(window, panel):
     menubar = tk.Menu(window)
     filemenu = tk.Menu(menubar, tearoff=0)
     filemenu.add_command(label="New", command=donothing)
-    filemenu.add_command(label="Open...", command=lambda:file_open_menu(window, img))
-    filemenu.add_command(label="Save", command=donothing)
+    filemenu.add_command(label="Open...", command=lambda:file_open_menu(window, panel))
+    filemenu.add_command(label="Save", command=save_img)
     filemenu.add_command(label="Save as...", command=donothing)
     filemenu.add_command(label="Close", command=donothing)
     filemenu.add_separator()
